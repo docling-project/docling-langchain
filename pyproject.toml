@@ -19,7 +19,7 @@ classifiers = [
 packages = [{include = "docling_langchain"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.13"
 langchain-core = "^0.3.0"
 docling = "^2.14.0"
 
