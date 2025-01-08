@@ -4,4 +4,4 @@
 #
 """Docling LangChain package."""
 
-from docling_langchain.loader import DoclingLoader
+from langchain_docling.loader import DoclingLoader

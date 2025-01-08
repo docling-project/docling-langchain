@@ -4,31 +4,31 @@ repos:
     hooks:
       - id: black
         name: Black
-        entry: poetry run black docling_langchain test
+        entry: poetry run black langchain_docling test
         pass_filenames: false
         language: system
         files: '\.py$'
       - id: isort
         name: isort
-        entry: poetry run isort docling_langchain test
+        entry: poetry run isort langchain_docling test
         pass_filenames: false
         language: system
         files: '\.py$'
       - id: autoflake
         name: autoflake
-        entry: poetry run autoflake docling_langchain test
+        entry: poetry run autoflake langchain_docling test
         pass_filenames: false
         language: system
         files: '\.py$'
       - id: mypy
         name: MyPy
-        entry: poetry run mypy docling_langchain test
+        entry: poetry run mypy langchain_docling test
         pass_filenames: false
         language: system
         files: '\.py$'
       - id: flake8
         name: Flake8
-        entry: poetry run flake8 docling_langchain
+        entry: poetry run flake8 langchain_docling
         pass_filenames: false
         language: system
         files: '\.py$'

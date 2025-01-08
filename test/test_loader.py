@@ -5,7 +5,7 @@ import pytest
 from docling.chunking import HierarchicalChunker
 from docling.datamodel.document import DoclingDocument as DLDocument
 
-from docling_langchain.loader import DoclingLoader, ExportType
+from langchain_docling.loader import DoclingLoader, ExportType
 
 in_json_str = json.dumps(
     {

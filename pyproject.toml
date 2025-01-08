@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "docling-langchain"
+name = "langchain-docling"
 version = "0.1.0"  # DO NOT EDIT, updated automatically
 description = "Docling LangChain integration"
 authors = ["Panos Vagenas <pva@zurich.ibm.com>"]
@@ -16,7 +16,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Programming Language :: Python :: 3"
 ]
-packages = [{include = "docling_langchain"}]
+packages = [{include = "langchain_docling"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
