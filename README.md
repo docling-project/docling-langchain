@@ -21,7 +21,9 @@ pip install langchain-docling
 
 ## Usage
 
-Basic usage looks as follows:
+### Basic usage
+
+Basic usage of `DoclingLoader` looks as follows:
 
 ```python
 from langchain_docling import DoclingLoader
@@ -29,8 +31,24 @@ from langchain_docling import DoclingLoader
 FILE_PATH = ["https://arxiv.org/pdf/2408.09869"]  # Docling Technical Report
 
 loader = DoclingLoader(file_path=FILE_PATH)
-
 docs = loader.load()
 ```
 
-For end-to-end usage samples check out the [examples](examples/).
+### Advanced usage
+
+When initializing a `DoclingLoader`, you can use the following parameters:
+
+- `file_path`: source as single str (URL or local file) or iterable thereof
+- `converter` (optional): any specific Docling converter instance to use
+- `convert_kwargs` (optional): any specific kwargs for conversion execution
+- `export_type` (optional): export mode to use: `ExportType.DOC_CHUNKS` (default) or
+    `ExportType.MARKDOWN`
+- `md_export_kwargs` (optional): any specific Markdown export kwargs (for Markdown mode)
+- `chunker` (optional): any specific Docling chunker instance to use (for doc-chunk
+    mode)
+- `meta_extractor` (optional): any specific metadata extractor to use
+
+### Example
+
+For an end-to-end usage example, check out
+[this notebook](https://ds4sd.github.io/docling/examples/rag_langchain/).
