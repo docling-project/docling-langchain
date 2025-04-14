@@ -21,7 +21,7 @@ packages = [{include = "langchain_docling"}]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 langchain-core = "^0.3.0"
-docling = "^2.14.0"
+docling = "2.30.0"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"

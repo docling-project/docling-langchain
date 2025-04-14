@@ -72,6 +72,7 @@ out_json_obj = {
                             "self_ref": "#/texts/0",
                             "parent": {"$ref": "#/body"},
                             "children": [],
+                            "content_layer": "body",
                             "label": "paragraph",
                             "prov": [],
                         }
@@ -98,6 +99,7 @@ out_json_obj = {
                             "self_ref": "#/texts/1",
                             "parent": {"$ref": "#/body"},
                             "children": [],
+                            "content_layer": "body",
                             "label": "paragraph",
                             "prov": [],
                         }
