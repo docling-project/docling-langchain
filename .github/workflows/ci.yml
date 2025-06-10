@@ -10,7 +10,7 @@ on:
 
 jobs:
   code-checks:
-    if: ${{ github.event_name == 'push' || (github.event.pull_request.head.repo.full_name != 'DS4SD/docling-langchain' && github.event.pull_request.head.repo.full_name != 'ds4sd/docling-langchain') }}
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name != 'docling-project/docling-langchain' }}
     uses: ./.github/workflows/checks.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
