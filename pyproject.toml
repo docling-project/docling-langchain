@@ -1,46 +1,76 @@
-[tool.poetry]
+[project]
 name = "langchain-docling"
 version = "0.2.0"  # DO NOT EDIT, updated automatically
 description = "Docling LangChain integration"
-authors = ["Panos Vagenas <pva@zurich.ibm.com>"]
 license = "MIT"
+license-files = ["LICENSE"]
 readme = "README.md"
-repository = "https://github.com/DS4SD/docling-langchain"
+authors = [
+    { name = "Panos Vagenas", email = "pva@zurich.ibm.com" },
+]
+maintainers = [
+    { name = "Panos Vagenas", email = "pva@zurich.ibm.com" },
+    { name = "Michele Dolfi", email = "dol@zurich.ibm.com" },
+    { name = "Christoph Auer", email = "cau@zurich.ibm.com" },
+    { name = "Peter Staar", email = "taa@zurich.ibm.com" },
+]
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Programming Language :: Python :: 3"
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+
 ]
-packages = [{include = "langchain_docling"}]
+requires-python = "~=3.9"
+dependencies = [
+  "langchain-core~=0.3.19",
+  "docling~=2.18",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-langchain-core = "^0.3.0"
-docling = "^2.14.0"
+[project.urls]
+homepage = "https://github.com/docling-project"
+repository = "https://github.com/docling-project/docling-langchain"
+issues = "https://github.com/docling-project/docling-langchain/issues"
+changelog = "https://github.com/docling-project/docling-langchain/blob/main/CHANGELOG.md"
 
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.5"
-black = "^24.4.2"
-pytest = "^7.1.2"
-mypy = "^1.6.0"
-isort = "^5.10.1"
-pre-commit = "^3.7.1"
-autoflake = "^2.0.0"
-flake8 = "^7.1.0"
-pycodestyle = "^2.10.0"
-flake8-docstrings = "^1.6.0"
-pep8-naming = "^0.13.2"
-nbqa = "^1.9.0"
-python-semantic-release = "^7.32.2"
+[dependency-groups]
+dev = [
+    "pre-commit~=3.7",
+    "mypy~=1.6",
+    "black~=24.4",
+    "isort~=5.10",
+    "autoflake~=2.0",
+    "flake8~=7.1",
+    "pycodestyle~=2.10",
+    "flake8-docstrings~=1.6",
+    "pep8-naming~=0.13",
+    "jsondiff~=2.0",
+    "types-setuptools~=70.3",
+    "pandas-stubs~=2.1",
+    "ipykernel~=6.29",
+    "ipywidgets~=8.1",
+    "nbqa~=1.9",
+    "coverage~=7.6",
+    "pytest~=8.3",
+    "pytest-cov>=6.1.1",
+    "python-semantic-release~=7.32",
+]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = true
+default-groups = "all"
+
+[tool.setuptools.packages.find]
+include = ["langchain_docling*"]
 
 [tool.black]
 line-length = 88

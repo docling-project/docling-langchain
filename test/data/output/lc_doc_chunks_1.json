@@ -1,0 +1,62 @@
+{
+    "root": [
+        {
+            "id": null,
+            "metadata": {
+                "source": "https://example.com/foo.pdf",
+                "dl_meta": {
+                    "schema_name": "docling_core.transforms.chunker.DocMeta",
+                    "version": "1.0.0",
+                    "doc_items": [
+                        {
+                            "self_ref": "#/texts/0",
+                            "parent": {
+                                "$ref": "#/body"
+                            },
+                            "children": [],
+                            "content_layer": "body",
+                            "label": "paragraph",
+                            "prov": []
+                        }
+                    ],
+                    "origin": {
+                        "mimetype": "text/html",
+                        "binary_hash": 42,
+                        "filename": "sample.html"
+                    }
+                }
+            },
+            "page_content": "Some text",
+            "type": "Document"
+        },
+        {
+            "id": null,
+            "metadata": {
+                "source": "https://example.com/foo.pdf",
+                "dl_meta": {
+                    "schema_name": "docling_core.transforms.chunker.DocMeta",
+                    "version": "1.0.0",
+                    "doc_items": [
+                        {
+                            "self_ref": "#/texts/1",
+                            "parent": {
+                                "$ref": "#/body"
+                            },
+                            "children": [],
+                            "content_layer": "body",
+                            "label": "paragraph",
+                            "prov": []
+                        }
+                    ],
+                    "origin": {
+                        "mimetype": "text/html",
+                        "binary_hash": 42,
+                        "filename": "sample.html"
+                    }
+                }
+            },
+            "page_content": "Another paragraph",
+            "type": "Document"
+        }
+    ]
+}

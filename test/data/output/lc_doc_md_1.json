@@ -1,0 +1,12 @@
+{
+    "root": [
+        {
+            "id": null,
+            "metadata": {
+                "source": "https://example.com/foo.pdf"
+            },
+            "page_content": "Some text\n\nAnother paragraph",
+            "type": "Document"
+        }
+    ]
+}

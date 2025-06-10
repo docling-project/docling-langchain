@@ -2,14 +2,14 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/langchain-docling)](https://pypi.org/project/langchain-docling/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/langchain-docling)](https://pypi.org/project/langchain-docling/)
-[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Pydantic v2](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json)](https://pydantic.dev)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![License MIT](https://img.shields.io/github/license/DS4SD/docling)](https://opensource.org/licenses/MIT)
 
-A [Docling](https://github.com/DS4SD/docling) integration for
+A [Docling](https://github.com/docling-project/docling) integration for
 [LangChain](https://github.com/langchain-ai/langchain/).
 
 ## Installation
@@ -17,6 +17,13 @@ A [Docling](https://github.com/DS4SD/docling) integration for
 Simply install `langchain-docling` from your package manager, e.g. pip:
 ```bash
 pip install langchain-docling
+```
+
+### Development setup
+
+To develop for Docling Core, you need Python >=3.9 <=3.13 and uv. You can then install from your local clone's root dir:
+```bash
+uv sync
 ```
 
 ## Usage
@@ -48,7 +55,7 @@ When initializing a `DoclingLoader`, you can use the following parameters:
     mode)
 - `meta_extractor` (optional): any specific metadata extractor to use
 
-### Example
+### Docs and examples
 
-For an end-to-end usage example, check out
-[this notebook](https://ds4sd.github.io/docling/examples/rag_langchain/).
+For more details and usage examples, check out
+[this page](https://docling-project.github.io/docling/integrations/langchain/).
