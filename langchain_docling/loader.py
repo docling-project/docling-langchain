@@ -7,9 +7,11 @@
 
 from abc import ABC, abstractmethod
 from enum import Enum
+from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, Optional, Union
 
 from docling.chunking import BaseChunk, BaseChunker, HybridChunker
+from docling.datamodel.base_models import DocumentStream
 from docling.datamodel.document import DoclingDocument
 from docling.document_converter import DocumentConverter
 from langchain_core.document_loaders import BaseLoader
@@ -27,13 +29,15 @@ class BaseMetaExtractor(ABC):
     """BaseMetaExtractor."""
 
     @abstractmethod
-    def extract_chunk_meta(self, file_path: str, chunk: BaseChunk) -> dict[str, Any]:
+    def extract_chunk_meta(
+        self, source: Union[Path, str, DocumentStream], chunk: BaseChunk
+    ) -> dict[str, Any]:
         """Extract chunk meta."""
         raise NotImplementedError()
 
     @abstractmethod
     def extract_dl_doc_meta(
-        self, file_path: str, dl_doc: DoclingDocument
+        self, source: Union[Path, str, DocumentStream], dl_doc: DoclingDocument
     ) -> dict[str, Any]:
         """Extract Docling document meta."""
         raise NotImplementedError()
@@ -42,18 +46,26 @@ class BaseMetaExtractor(ABC):
 class MetaExtractor(BaseMetaExtractor):
     """MetaExtractor."""
 
-    def extract_chunk_meta(self, file_path: str, chunk: BaseChunk) -> dict[str, Any]:
+    def extract_chunk_meta(
+        self, source: Union[Path, str, DocumentStream], chunk: BaseChunk
+    ) -> dict[str, Any]:
         """Extract chunk meta."""
         return {
-            "source": file_path,
+            "source": (
+                str(source) if not isinstance(source, DocumentStream) else source.name
+            ),
             "dl_meta": chunk.meta.export_json_dict(),
         }
 
     def extract_dl_doc_meta(
-        self, file_path: str, dl_doc: DoclingDocument
+        self, source: Union[Path, str, DocumentStream], dl_doc: DoclingDocument
     ) -> dict[str, Any]:
         """Extract Docling document meta."""
-        return {"source": file_path}
+        return {
+            "source": (
+                str(source) if not isinstance(source, DocumentStream) else source.name
+            ),
+        }
 
 
 class DoclingLoader(BaseLoader):
@@ -61,7 +73,9 @@ class DoclingLoader(BaseLoader):
 
     def __init__(
         self,
-        file_path: Union[str, Iterable[str]],
+        source: Union[
+            Path, str, DocumentStream, Iterable[Union[Path, str, DocumentStream]]
+        ],
         *,
         converter: Optional[DocumentConverter] = None,
         convert_kwargs: Optional[Dict[str, Any]] = None,
@@ -73,8 +87,8 @@ class DoclingLoader(BaseLoader):
         """Initialize with a file path.
 
         Args:
-            file_path: File source as single str (URL or local file) or Iterable
-                thereof.
+            source: File source as single object (URL, local file or `DocumentStream`)
+                or `Iterable` thereof.
             converter: Any specific `DocumentConverter` to use. Defaults to `None` (i.e.
                 converter defined internally).
             convert_kwargs: Any specific kwargs to pass to conversion invocation.
@@ -91,10 +105,11 @@ class DoclingLoader(BaseLoader):
             meta_extractor: The extractor instance to use for populating the output
                 document metadata; if not set, a system default is used.
         """
-        self._file_paths = (
-            file_path
-            if isinstance(file_path, Iterable) and not isinstance(file_path, str)
-            else [file_path]
+        self._sources = (
+            source
+            if isinstance(source, Iterable)
+            and not isinstance(source, (str, DocumentStream))
+            else [source]
         )
 
         self._converter: DocumentConverter = converter or DocumentConverter()
@@ -113,9 +128,9 @@ class DoclingLoader(BaseLoader):
         self,
     ) -> Iterator[Document]:
         """Lazy load documents."""
-        for file_path in self._file_paths:
+        for source in self._sources:
             conv_res = self._converter.convert(
-                source=file_path,
+                source=source,
                 **self._convert_kwargs,
             )
             dl_doc = conv_res.document
@@ -123,7 +138,7 @@ class DoclingLoader(BaseLoader):
                 yield Document(
                     page_content=dl_doc.export_to_markdown(**self._md_export_kwargs),
                     metadata=self._meta_extractor.extract_dl_doc_meta(
-                        file_path=file_path,
+                        source=source,
                         dl_doc=dl_doc,
                     ),
                 )
@@ -133,7 +148,7 @@ class DoclingLoader(BaseLoader):
                     yield Document(
                         page_content=self._chunker.serialize(chunk=chunk),
                         metadata=self._meta_extractor.extract_chunk_meta(
-                            file_path=file_path,
+                            source=source,
                             chunk=chunk,
                         ),
                     )
