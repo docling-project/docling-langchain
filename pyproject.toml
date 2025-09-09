@@ -36,11 +36,6 @@ dependencies = [
   "docling~=2.18",
 ]
 
-[project.optional-dependencies]
-plugin = [
-    "langchain-openai>=0.2.12",
-]
-
 [project.urls]
 homepage = "https://github.com/docling-project"
 repository = "https://github.com/docling-project/docling-langchain"
@@ -68,6 +63,7 @@ dev = [
     "pytest~=8.3",
     "pytest-cov>=6.1.1",
     "python-semantic-release~=7.32",
+    "langchain-openai>=0.2.12",
 ]
 
 [tool.uv]

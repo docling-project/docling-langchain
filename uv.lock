@@ -1515,11 +1515,6 @@ dependencies = [
     { name = "langchain-core" },
 ]
 
-[package.optional-dependencies]
-plugin = [
-    { name = "langchain-openai" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "autoflake" },
@@ -1531,6 +1526,7 @@ dev = [
     { name = "ipywidgets" },
     { name = "isort" },
     { name = "jsondiff" },
+    { name = "langchain-openai" },
     { name = "mypy" },
     { name = "nbqa" },
     { name = "pandas-stubs", version = "2.2.2.240807", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -1548,9 +1544,7 @@ dev = [
 requires-dist = [
     { name = "docling", specifier = "~=2.18" },
     { name = "langchain-core", specifier = "~=0.3.19" },
-    { name = "langchain-openai", marker = "extra == 'plugin'", specifier = ">=0.2.12" },
 ]
-provides-extras = ["plugin"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1563,6 +1557,7 @@ dev = [
     { name = "ipywidgets", specifier = "~=8.1" },
     { name = "isort", specifier = "~=5.10" },
     { name = "jsondiff", specifier = "~=2.0" },
+    { name = "langchain-openai", specifier = ">=0.2.12" },
     { name = "mypy", specifier = "~=1.6" },
     { name = "nbqa", specifier = "~=1.9" },
     { name = "pandas-stubs", specifier = "~=2.1" },
