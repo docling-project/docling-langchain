@@ -36,6 +36,11 @@ dependencies = [
   "docling~=2.18",
 ]
 
+[project.optional-dependencies]
+plugin = [
+    "langchain-openai>=0.2.12",
+]
+
 [project.urls]
 homepage = "https://github.com/docling-project"
 repository = "https://github.com/docling-project/docling-langchain"
@@ -71,6 +76,9 @@ default-groups = "all"
 
 [tool.setuptools.packages.find]
 include = ["langchain_docling*"]
+
+[project.entry-points."docling"]
+langchain_docling = "langchain_docling._plugins"
 
 [tool.black]
 line-length = 88
