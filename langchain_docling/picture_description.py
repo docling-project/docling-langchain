@@ -63,8 +63,6 @@ class PictureDescriptionLangChainModel(
         batch_messages = []
 
         for image in images:
-            # image.show()
-            # image_data = base64.b64encode(image.tobytes()).decode("utf-8")
             buffered = io.BytesIO()
             image.save(buffered, format="PNG")
             image_data = base64.b64encode(buffered.getvalue()).decode("utf-8")
