@@ -21,7 +21,8 @@ pip install langchain-docling
 
 ### Development setup
 
-To develop for Docling LangChain, you need Python >=3.10 <=3.13 and uv. You can then install from your local clone's root dir:
+To develop for Docling LangChain, you need Python 3.10 through 3.14 and uv. You can then install from your local clone's
+root directory:
 ```bash
 uv sync
 ```
