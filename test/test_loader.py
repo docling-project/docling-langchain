@@ -10,7 +10,6 @@ from langchain_docling.loader import DoclingLoader, ExportType
 from .test_data_gen_flag import GEN_TEST_DATA
 
 
-@pytest.mark.requires("docling")
 def test_load_as_markdown(monkeypatch: pytest.MonkeyPatch) -> None:
 
     mock_dl_doc = DoclingDocument.load_from_json("test/data/input/dl_doc_1.json")
@@ -46,7 +45,6 @@ def test_load_as_markdown(monkeypatch: pytest.MonkeyPatch) -> None:
         assert act_data == exp_data
 
 
-@pytest.mark.requires("docling")
 def test_load_as_doc_chunks(monkeypatch: pytest.MonkeyPatch) -> None:
 
     mock_dl_doc = DoclingDocument.load_from_json("test/data/input/dl_doc_1.json")

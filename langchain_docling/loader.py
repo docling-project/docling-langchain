@@ -131,7 +131,7 @@ class DoclingLoader(BaseLoader):
                 chunk_iter = self._chunker.chunk(dl_doc)
                 for chunk in chunk_iter:
                     yield Document(
-                        page_content=self._chunker.serialize(chunk=chunk),
+                        page_content=self._chunker.contextualize(chunk=chunk),
                         metadata=self._meta_extractor.extract_chunk_meta(
                             file_path=file_path,
                             chunk=chunk,

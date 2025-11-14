@@ -85,4 +85,4 @@ class PictureDescriptionLangChainModel(
 
         responses = self.llm.batch(batch_messages)
         for resp in responses:
-            yield resp.text()
+            yield resp.text
