@@ -26,7 +26,7 @@ def test_load_as_markdown(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
     loader = DoclingLoader(
-        file_path="https://example.com/foo.pdf",
+        source="https://example.com/foo.pdf",
         export_type=ExportType.MARKDOWN,
     )
     lc_doc_iter = loader.lazy_load()
@@ -61,7 +61,7 @@ def test_load_as_doc_chunks(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
     loader = DoclingLoader(
-        file_path="https://example.com/foo.pdf",
+        source="https://example.com/foo.pdf",
         export_type=ExportType.DOC_CHUNKS,
         chunker=HierarchicalChunker(),
     )
