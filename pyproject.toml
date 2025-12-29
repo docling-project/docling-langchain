@@ -32,7 +32,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4"  # syntax without tilde to prevent uv warning
 dependencies = [
-  "langchain-core~=1.0",
+  "langchain-core~=1.2.5",
   "docling~=2.26",
 ]
 
