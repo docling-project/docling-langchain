@@ -12,7 +12,7 @@ from typing import Any, Dict, Iterable, Iterator, Optional, Union
 from docling.chunking import BaseChunk, BaseChunker, HybridChunker
 from docling.datamodel.document import DoclingDocument
 from docling.document_converter import DocumentConverter
-from langchain_core.document_loaders import BaseLoader
+from langchain_core.document_loaders import BaseBlobParser, BaseLoader, Blob
 from langchain_core.documents import Document
 
 
@@ -56,6 +56,62 @@ class MetaExtractor(BaseMetaExtractor):
         return {"source": file_path}
 
 
+class DoclingParser(BaseBlobParser):
+    """Docling Parser."""
+
+    def __init__(
+        self,
+        *,
+        converter: Optional[DocumentConverter] = None,
+        convert_kwargs: Optional[Dict[str, Any]] = None,
+        export_type: ExportType = ExportType.DOC_CHUNKS,
+        md_export_kwargs: Optional[dict[str, Any]] = None,
+        chunker: Optional[BaseChunker] = None,
+        meta_extractor: Optional[BaseMetaExtractor] = None,
+    ):
+        """Initialize DoclingParser."""
+        self._converter: DocumentConverter = converter or DocumentConverter()
+        self._convert_kwargs = convert_kwargs if convert_kwargs is not None else {}
+        self._export_type = export_type
+        self._md_export_kwargs = (
+            md_export_kwargs
+            if md_export_kwargs is not None
+            else {"image_placeholder": ""}
+        )
+        if self._export_type == ExportType.DOC_CHUNKS:
+            self._chunker: BaseChunker = chunker or HybridChunker()
+        self._meta_extractor = meta_extractor or MetaExtractor()
+
+    def lazy_parse(self, blob: Blob) -> Iterator[Document]:
+        """Lazy parse blob into documents."""
+        file_path = str(blob.source) if blob.source else str(blob.path)
+        conv_res = self._converter.convert(
+            source=file_path,
+            **self._convert_kwargs,
+        )
+        dl_doc = conv_res.document
+        if self._export_type == ExportType.MARKDOWN:
+            yield Document(
+                page_content=dl_doc.export_to_markdown(**self._md_export_kwargs),
+                metadata=self._meta_extractor.extract_dl_doc_meta(
+                    file_path=file_path,
+                    dl_doc=dl_doc,
+                ),
+            )
+        elif self._export_type == ExportType.DOC_CHUNKS:
+            chunk_iter = self._chunker.chunk(dl_doc)
+            for chunk in chunk_iter:
+                yield Document(
+                    page_content=self._chunker.contextualize(chunk=chunk),
+                    metadata=self._meta_extractor.extract_chunk_meta(
+                        file_path=file_path,
+                        chunk=chunk,
+                    ),
+                )
+        else:
+            raise ValueError(f"Unexpected export type: {self._export_type}")
+
+
 class DoclingLoader(BaseLoader):
     """Docling Loader."""
 
@@ -97,46 +153,19 @@ class DoclingLoader(BaseLoader):
             else [file_path]
         )
 
-        self._converter: DocumentConverter = converter or DocumentConverter()
-        self._convert_kwargs = convert_kwargs if convert_kwargs is not None else {}
-        self._export_type = export_type
-        self._md_export_kwargs = (
-            md_export_kwargs
-            if md_export_kwargs is not None
-            else {"image_placeholder": ""}
+        self._parser = DoclingParser(
+            converter=converter,
+            convert_kwargs=convert_kwargs,
+            export_type=export_type,
+            md_export_kwargs=md_export_kwargs,
+            chunker=chunker,
+            meta_extractor=meta_extractor,
         )
-        if self._export_type == ExportType.DOC_CHUNKS:
-            self._chunker: BaseChunker = chunker or HybridChunker()
-        self._meta_extractor = meta_extractor or MetaExtractor()
 
     def lazy_load(
         self,
     ) -> Iterator[Document]:
         """Lazy load documents."""
         for file_path in self._file_paths:
-            conv_res = self._converter.convert(
-                source=file_path,
-                **self._convert_kwargs,
-            )
-            dl_doc = conv_res.document
-            if self._export_type == ExportType.MARKDOWN:
-                yield Document(
-                    page_content=dl_doc.export_to_markdown(**self._md_export_kwargs),
-                    metadata=self._meta_extractor.extract_dl_doc_meta(
-                        file_path=file_path,
-                        dl_doc=dl_doc,
-                    ),
-                )
-            elif self._export_type == ExportType.DOC_CHUNKS:
-                chunk_iter = self._chunker.chunk(dl_doc)
-                for chunk in chunk_iter:
-                    yield Document(
-                        page_content=self._chunker.contextualize(chunk=chunk),
-                        metadata=self._meta_extractor.extract_chunk_meta(
-                            file_path=file_path,
-                            chunk=chunk,
-                        ),
-                    )
-
-            else:
-                raise ValueError(f"Unexpected export type: {self._export_type}")
+            blob = Blob(path=file_path)
+            yield from self._parser.lazy_parse(blob)
