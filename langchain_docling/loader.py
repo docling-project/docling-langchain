@@ -23,6 +23,18 @@ class ExportType(str, Enum):
     DOC_CHUNKS = "doc_chunks"
 
 
+def _sanitize_metadata_keys(data: Any) -> Any:
+    """Recursively sanitize dict keys for database compatibility (e.g. '$' -> '_')."""
+    if isinstance(data, dict):
+        return {
+            key.replace("$", "_"): _sanitize_metadata_keys(value)
+            for key, value in data.items()
+        }
+    elif isinstance(data, list):
+        return [_sanitize_metadata_keys(item) for item in data]
+    return data
+
+
 class BaseMetaExtractor(ABC):
     """BaseMetaExtractor."""
 
@@ -42,11 +54,24 @@ class BaseMetaExtractor(ABC):
 class MetaExtractor(BaseMetaExtractor):
     """MetaExtractor."""
 
+    def __init__(self, *, sanitize_keys: bool = True) -> None:
+        """Initialize MetaExtractor.
+
+        Args:
+            sanitize_keys: If True (default), sanitize metadata keys for database
+                compatibility (e.g., replace '$' with '_' for Weaviate GraphQL
+                compatibility).
+        """
+        self._sanitize_keys = sanitize_keys
+
     def extract_chunk_meta(self, file_path: str, chunk: BaseChunk) -> dict[str, Any]:
         """Extract chunk meta."""
+        dl_meta = chunk.meta.export_json_dict()
+        if self._sanitize_keys:
+            dl_meta = _sanitize_metadata_keys(dl_meta)
         return {
             "source": file_path,
-            "dl_meta": chunk.meta.export_json_dict(),
+            "dl_meta": dl_meta,
         }
 
     def extract_dl_doc_meta(
