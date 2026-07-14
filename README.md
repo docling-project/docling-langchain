@@ -55,6 +55,44 @@ When initializing a `DoclingLoader`, you can use the following parameters:
 - `chunker` (optional): any specific Docling chunker instance to use (for doc-chunk
     mode)
 - `meta_extractor` (optional): any specific metadata extractor to use
+- `docling_serve_url` (optional): URL of a remote Docling endpoint (`docling-serve`
+    or Docling for IBM watsonx). When set (or via the `DOCLING_SERVE_URL` env var),
+    conversion runs remotely instead of locally. Cannot be combined with `converter`.
+- `api_key` (optional): API key for the remote endpoint; falls back to the
+    `DOCLING_API_KEY` env var.
+- `docling_serve_options` (optional): options dict for remote conversion, validated
+    against Docling's `ConvertDocumentsOptions` (unknown keys are dropped with a
+    warning).
+- `docling_serve_client_kwargs` (optional): extra keyword arguments for the
+    `DoclingServiceClient` constructor, e.g. `{"job_timeout": 600}` (the client
+    defaults to a 300s per-file timeout).
+
+### Remote endpoint (optional)
+
+By default `DoclingLoader` converts locally. To offload conversion to a remote
+Docling endpoint (self-hosted `docling-serve >= 1.0.0` or Docling for IBM watsonx),
+pass a URL (and key):
+
+```python
+from langchain_docling import DoclingLoader
+
+loader = DoclingLoader(
+    file_path=["https://arxiv.org/pdf/2408.09869"],
+    docling_serve_url="https://your-docling-serve.example",
+    api_key="...",                       # or set DOCLING_API_KEY
+    docling_serve_options={"do_ocr": True},
+)
+docs = loader.load()
+```
+
+`docling_serve_url` / `api_key` also read from the `DOCLING_SERVE_URL` /
+`DOCLING_API_KEY` environment variables. The same code targets a self-hosted
+`docling-serve` and Docling for IBM watsonx — only the URL and key differ.
+Conversion results are returned in-body (avoiding a presigned-artifact round
+trip), so the endpoint needs no object-storage (S3) configuration.
+
+For custom/self-signed TLS, the remote path uses `httpx`: set `SSL_CERT_FILE` or
+`SSL_CERT_DIR` (a `requests`-style `verify=` is not used).
 
 ### Docs and examples
 
