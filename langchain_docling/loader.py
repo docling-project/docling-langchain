@@ -12,7 +12,6 @@ from typing import Any, Protocol
 
 from docling.chunking import BaseChunk, BaseChunker, HybridChunker
 from docling.datamodel.document import ConversionResult, DoclingDocument
-from docling.document_converter import DocumentConverter
 from langchain_core.document_loaders import BaseLoader
 from langchain_core.documents import Document
 
@@ -110,7 +109,12 @@ class DoclingLoader(BaseLoader):
             else [file_path]
         )
 
-        self._converter: ConversionBackend = converter or DocumentConverter()
+        if converter is None:
+            from docling.document_converter import DocumentConverter
+
+            self._converter: ConversionBackend = DocumentConverter()
+        else:
+            self._converter = converter
         self._convert_kwargs = convert_kwargs if convert_kwargs is not None else {}
         self._export_type = export_type
         self._md_export_kwargs = (

@@ -14,9 +14,16 @@ A [Docling](https://github.com/docling-project/docling) integration for
 
 ## Installation
 
-Simply install `langchain-docling` from your package manager, e.g. pip:
+For Docling Serve or Managed Docling, install the lightweight service client:
 ```bash
 pip install langchain-docling
+```
+
+This installation does not include local AI runtimes such as PyTorch. To convert
+documents locally, install the `local` extra instead:
+
+```bash
+pip install "langchain-docling[local]"
 ```
 
 ### Development setup
@@ -31,7 +38,7 @@ uv sync
 
 ### Basic usage
 
-Basic usage of `DoclingLoader` looks as follows:
+For local conversion, install the `local` extra and use `DoclingLoader` as follows:
 
 ```python
 from langchain_docling import DoclingLoader

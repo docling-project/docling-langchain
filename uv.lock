@@ -658,18 +658,6 @@ wheels = [
 ]
 
 [[package]]
-name = "docling"
-version = "2.115.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "docling-slim", extra = ["standard"] },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/31/1901a67e35abd97868cff08c57d8cbebfeafb8045413340f3746a1a5f249/docling-2.115.0.tar.gz", hash = "sha256:99f6fb72293f3270f42514711808a766d4d7305152278171532fd59eb6bf55a3", size = 9015, upload-time = "2026-07-23T14:47:20.597Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/fc/c8110cbab5703e6b17b5daf287e646b5389533bbf44b2cc8830e00b9c3fe/docling-2.115.0-py3-none-any.whl", hash = "sha256:1a3d9bdf2f82610e97085a1a1b53cf259d1bd7aff97651ff2decc3b2b105123c", size = 5179, upload-time = "2026-07-23T14:47:19.379Z" },
-]
-
-[[package]]
 name = "docling-core"
 version = "2.88.0"
 source = { registry = "https://pypi.org/simple" }
@@ -788,6 +776,24 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+convert-core = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pillow" },
+    { name = "rtree" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.16.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+feat-chunking = [
+    { name = "docling-core", extra = ["chunking"] },
+]
+service-client = [
+    { name = "httpx" },
+    { name = "python-dotenv" },
+    { name = "rich" },
+    { name = "typer" },
+    { name = "websockets" },
+]
 standard = [
     { name = "accelerate" },
     { name = "beautifulsoup4" },
@@ -1540,8 +1546,13 @@ name = "langchain-docling"
 version = "2.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "docling" },
+    { name = "docling-slim", extra = ["convert-core", "feat-chunking", "service-client"] },
     { name = "langchain-core" },
+]
+
+[package.optional-dependencies]
+local = [
+    { name = "docling-slim", extra = ["standard"] },
 ]
 
 [package.dev-dependencies]
@@ -1570,9 +1581,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "docling", specifier = "~=2.103" },
+    { name = "docling-slim", extras = ["convert-core", "feat-chunking", "service-client"], specifier = "~=2.103" },
+    { name = "docling-slim", extras = ["standard"], marker = "extra == 'local'", specifier = "~=2.103" },
     { name = "langchain-core", specifier = "~=1.0" },
 ]
+provides-extras = ["local"]
 
 [package.metadata.requires-dev]
 dev = [
