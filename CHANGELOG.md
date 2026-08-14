@@ -1,3 +1,13 @@
+## [v3.0.0](https://github.com/docling-project/docling-langchain/releases/tag/v3.0.0) - 2026-08-14
+
+### Feature
+
+* Support for DoclingServiceClient via protocol ([#35](https://github.com/docling-project/docling-langchain/issues/35)) ([`548f32b`](https://github.com/docling-project/docling-langchain/commit/548f32bacf48c4d0792c18335685735777223b99))
+
+### Breaking
+
+* Support for DoclingServiceClient via protocol ([#35](https://github.com/docling-project/docling-langchain/issues/35)) ([`548f32b`](https://github.com/docling-project/docling-langchain/commit/548f32bacf48c4d0792c18335685735777223b99))
+
 ## [v2.0.0](https://github.com/docling-project/docling-langchain/releases/tag/v2.0.0) - 2025-11-17
 
 ### Feature
