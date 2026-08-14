@@ -6,12 +6,12 @@
 """Docling LangChain loader module."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable, Iterable, Iterator
 from enum import Enum
-from typing import Any, Dict, Iterable, Iterator, Optional, Union
+from typing import Any, Protocol
 
 from docling.chunking import BaseChunk, BaseChunker, HybridChunker
-from docling.datamodel.document import DoclingDocument
-from docling.document_converter import DocumentConverter
+from docling.datamodel.document import ConversionResult, DoclingDocument
 from langchain_core.document_loaders import BaseLoader
 from langchain_core.documents import Document
 
@@ -21,6 +21,15 @@ class ExportType(str, Enum):
 
     MARKDOWN = "markdown"
     DOC_CHUNKS = "doc_chunks"
+
+
+class ConversionBackend(Protocol):
+    """Structural interface for local and service-backed Docling conversion."""
+
+    @property
+    def convert(self) -> Callable[..., ConversionResult]:
+        """Return the backend-specific conversion callable."""
+        ...
 
 
 class BaseMetaExtractor(ABC):
@@ -61,24 +70,27 @@ class DoclingLoader(BaseLoader):
 
     def __init__(
         self,
-        file_path: Union[str, Iterable[str]],
+        file_path: str | Iterable[str],
         *,
-        converter: Optional[DocumentConverter] = None,
-        convert_kwargs: Optional[Dict[str, Any]] = None,
+        converter: ConversionBackend | None = None,
+        convert_kwargs: dict[str, Any] | None = None,
         export_type: ExportType = ExportType.DOC_CHUNKS,
-        md_export_kwargs: Optional[dict[str, Any]] = None,
-        chunker: Optional[BaseChunker] = None,
-        meta_extractor: Optional[BaseMetaExtractor] = None,
+        md_export_kwargs: dict[str, Any] | None = None,
+        chunker: BaseChunker | None = None,
+        meta_extractor: BaseMetaExtractor | None = None,
     ):
         """Initialize with a file path.
 
         Args:
             file_path: File source as single str (URL or local file) or Iterable
                 thereof.
-            converter: Any specific `DocumentConverter` to use. Defaults to `None` (i.e.
-                converter defined internally).
-            convert_kwargs: Any specific kwargs to pass to conversion invocation.
-                Defaults to `None` (i.e. behavior defined internally).
+            converter: A local `DocumentConverter`, remote `DoclingServiceClient`, or
+                compatible conversion backend. Defaults to `None` (i.e. a local
+                `DocumentConverter` defined internally).
+            convert_kwargs: Any backend-specific kwargs to pass to the conversion
+                invocation. For example, pass `options` when using a
+                `DoclingServiceClient`. Defaults to `None` (i.e. behavior defined
+                internally).
             export_type: The type to export to: either `ExportType.MARKDOWN` (outputs
                 Markdown of whole input file) or `ExportType.DOC_CHUNKS` (outputs chunks
                 based on chunker).
@@ -97,7 +109,12 @@ class DoclingLoader(BaseLoader):
             else [file_path]
         )
 
-        self._converter: DocumentConverter = converter or DocumentConverter()
+        if converter is None:
+            from docling.document_converter import DocumentConverter
+
+            self._converter: ConversionBackend = DocumentConverter()
+        else:
+            self._converter = converter
         self._convert_kwargs = convert_kwargs if convert_kwargs is not None else {}
         self._export_type = export_type
         self._md_export_kwargs = (

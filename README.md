@@ -14,9 +14,16 @@ A [Docling](https://github.com/docling-project/docling) integration for
 
 ## Installation
 
-Simply install `langchain-docling` from your package manager, e.g. pip:
+For Docling Serve or Managed Docling, install the lightweight service client:
 ```bash
 pip install langchain-docling
+```
+
+This installation does not include local AI runtimes such as PyTorch. To convert
+documents locally, install the `local` extra instead:
+
+```bash
+pip install "langchain-docling[local]"
 ```
 
 ### Development setup
@@ -31,7 +38,7 @@ uv sync
 
 ### Basic usage
 
-Basic usage of `DoclingLoader` looks as follows:
+For local conversion, install the `local` extra and use `DoclingLoader` as follows:
 
 ```python
 from langchain_docling import DoclingLoader
@@ -42,13 +49,51 @@ loader = DoclingLoader(file_path=FILE_PATH)
 docs = loader.load()
 ```
 
+### Docling Serve or Managed Docling
+
+Pass Docling's existing `DoclingServiceClient` as the loader's converter to run
+conversion remotely. The same client works with
+[Docling for IBM watsonx](https://www.ibm.com/products/docling) and a self-hosted
+Docling Serve endpoint:
+
+```python
+import os
+
+from docling.datamodel.service.options import ConvertDocumentsOptions
+from docling.service_client import DoclingServiceClient
+
+from langchain_docling import DoclingLoader
+
+service_url = os.environ["DOCLING_SERVICE_URL"]
+api_key = os.environ["DOCLING_API_KEY"]
+options = ConvertDocumentsOptions(
+    do_ocr=True,
+    table_mode="accurate",
+)
+
+with DoclingServiceClient(url=service_url, api_key=api_key) as client:
+    loader = DoclingLoader(
+        file_path=["https://arxiv.org/pdf/2408.09869"],
+        converter=client,
+        convert_kwargs={"options": options},
+    )
+    docs = loader.load()
+```
+
+The loader does not take ownership of a supplied client. Keep the client open
+until `load()` completes or until a `lazy_load()` iterator has been fully
+consumed. For a self-hosted endpoint that does not require authentication, omit
+`api_key`.
+
 ### Advanced usage
 
 When initializing a `DoclingLoader`, you can use the following parameters:
 
 - `file_path`: source as single str (URL or local file) or iterable thereof
-- `converter` (optional): any specific Docling converter instance to use
-- `convert_kwargs` (optional): any specific kwargs for conversion execution
+- `converter` (optional): a local `DocumentConverter`, remote
+    `DoclingServiceClient`, or compatible converter
+- `convert_kwargs` (optional): backend-specific kwargs for conversion execution,
+    such as `{"options": ConvertDocumentsOptions(...)}` for the service client
 - `export_type` (optional): export mode to use: `ExportType.DOC_CHUNKS` (default) or
     `ExportType.MARKDOWN`
 - `md_export_kwargs` (optional): any specific Markdown export kwargs (for Markdown mode)
