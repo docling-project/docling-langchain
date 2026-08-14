@@ -107,7 +107,6 @@ pretty = true
 no_implicit_optional = true
 namespace_packages = true
 show_error_codes = true
-python_version = "3.10"
 plugins = ["pydantic.mypy"]
 
 [tool.semantic_release]
