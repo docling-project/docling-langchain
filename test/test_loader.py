@@ -100,3 +100,24 @@ def test_service_client_load_preserves_chunk_metadata(
     assert [document.page_content for document in documents] == [
         chunk.text for chunk in HierarchicalChunker().chunk(mock_dl_doc)
     ]
+
+
+def test_load_from_iterator_can_be_repeated() -> None:
+    mock_dl_doc = DoclingDocument.load_from_json("test/data/input/dl_doc_1.json")
+    mock_response = MagicMock()
+    mock_response.document = mock_dl_doc
+    converter = MagicMock()
+    converter.convert.return_value = mock_response
+    file_paths = ["https://example.com/foo.pdf", "https://example.com/bar.pdf"]
+
+    loader = DoclingLoader(
+        file_path=iter(file_paths),
+        converter=converter,
+        export_type=ExportType.MARKDOWN,
+    )
+
+    first = loader.load()
+    second = loader.load()
+
+    assert [doc.metadata["source"] for doc in first] == file_paths
+    assert [doc.metadata["source"] for doc in second] == file_paths

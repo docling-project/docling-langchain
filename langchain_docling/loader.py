@@ -104,7 +104,7 @@ class DoclingLoader(BaseLoader):
                 document metadata; if not set, a system default is used.
         """
         self._file_paths = (
-            file_path
+            list(file_path)
             if isinstance(file_path, Iterable) and not isinstance(file_path, str)
             else [file_path]
         )
